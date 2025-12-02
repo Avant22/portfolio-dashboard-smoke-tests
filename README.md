@@ -1,4 +1,5 @@
 # Portfolio Dashboard Smoke Tests
+[![CI - Portfolio Dashboard Smoke Tests](https://github.com/Avant22/portfolio-dashboard-smoke-tests/actions/workflows/tests.yml/badge.svg)](https://github.com/Avant22/portfolio-dashboard-smoke-tests/actions/workflows/tests.yml)
 
 A minimal smoke-test suite for a fictional portfolio dashboard, covering API, UI, and database checks.
 
@@ -74,6 +75,10 @@ HTML report is generated at `reports/report.html`.
 - UI: Verifies login flow and that dashboard inventory items are visible.
 - DB: Confirms the test user and portfolio positions exist in the database.
 
+## Configuration
+- Override defaults via environment variables: `API_BASE_URL`, `UI_BASE_URL`, `TEST_USER_EMAIL`, `TEST_USER_PASSWORD`, `TEST_PORTFOLIO_USER_ID`.
+- The SQLite database is regenerated for tests via `db/setup_db.py` (also called automatically in `tests/conftest.py`).
+
 ## Continuous Integration
 GitHub Actions workflow (`.github/workflows/tests.yml`) installs dependencies, sets up Playwright, seeds the SQLite database, runs pytest, and uploads the HTML report as an artifact.
 
@@ -82,3 +87,7 @@ GitHub Actions workflow (`.github/workflows/tests.yml`) installs dependencies, s
 - Include negative tests for authentication and validation.
 - Capture screenshots on UI test failures.
 - Introduce environment-specific configuration profiles.
+- Add richer Playwright reporting (videos/trace), and expand DB fixtures for additional user scenarios.
+
+## License
+MIT

@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+import time
 
 import pytest
 import requests
@@ -20,13 +21,19 @@ def test_portfolio_summary_schema_and_status():
     schema = load_schema("portfolio_summary_schema.json")
 
     url = f"{config.API_BASE_URL}/users/{config.TEST_PORTFOLIO_USER_ID}"
-    try:
-        response = requests.get(url, timeout=10)
-    except RequestException as exc:
-        pytest.skip(f"API call failed: {exc}")
+    response = None
+    for attempt in range(3):
+        try:
+            response = requests.get(url, timeout=10)
+            if response.status_code == 200:
+                break
+        except RequestException as exc:
+            if attempt == 2:
+                pytest.skip(f"API call failed after retries: {exc}")
+        time.sleep(1)
 
-    if response.status_code != 200:
-        pytest.skip(f"Expected 200, got {response.status_code} from {url}")
+    if response is None or response.status_code != 200:
+        pytest.skip(f"Expected 200 after retries, got {getattr(response, 'status_code', 'no response')} from {url}")
 
     body = response.json()
     adapted = {
