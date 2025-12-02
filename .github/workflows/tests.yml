@@ -1,0 +1,44 @@
+name: CI - Portfolio Dashboard Smoke Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m playwright install chromium
+
+      - name: Prepare database
+        run: |
+          source .venv/bin/activate
+          python db/setup_db.py
+
+      - name: Run pytest
+        run: |
+          source .venv/bin/activate
+          pytest
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report
+          path: reports/report.html
