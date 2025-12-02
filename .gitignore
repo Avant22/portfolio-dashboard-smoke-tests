@@ -15,3 +15,4 @@ reports/*.html
 
 # Databases
 db/qa_demo.db
+tests/db/qa_demo.db
